@@ -3,6 +3,7 @@
 <head>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.6.0/dist/chart.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="utils.js"></script>
     <script type="text/javascript" src="graph.js"></script>
     <link rel="stylesheet" href="app.css">
     
@@ -12,19 +13,23 @@
 </head>
 <body>
 
-<button class="top">Top 25</button>
-<button class="boldKnown">Bold Known</button>
-<button class="enableAll"">All</button>
-<button class="reset"">Reset</button>
+<button class="all"">All</button>
+<button class="top-5">Top 5</button>
+<button class="top-25">Top 25</button>
+<button class="bold-rivals">Bold Rivals</button>
+<button class="bold-tomsen"">Bold Tomsen</button>
+<button class="reset-bold"">Reset Bold</button>
+<button class="clear"">Clear</button>
 
 <div class="wrapper">
     <div class="box">
-        <canvas id="races"></canvas>
+        <canvas id="championship"></canvas>
     </div>
     <div class="box">
-        <canvas id="championship"></canvas>
+        <canvas id="races"></canvas>
     </div>
 </div>
 
+<div id="chartLegend" style="max-height: 200px;"/>
 </body>
 </html>

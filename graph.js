@@ -3,8 +3,10 @@ let sourceDataArray = dataString.split(';');
 let raceDataArray = [];
 let championshipDataArray = [];
 let othersWidth = 0.5;
+let standardWidth = 1;
 let boldWidth = 5;
 let counterLimit = 25;
+let charts = [];
 
 const defaultPeople = [
     "Tomas Liutvinas",
@@ -26,25 +28,26 @@ for (var i = 0; i < sourceDataArray.length; i++){
         champStandings.push(currentStanding);
     }
 
-    let tension = 0.1;
-    let borderWidth = othersWidth;
-    let hidden = true;
-    
-    if (defaultPeople.includes(label)){
-        borderWidth = boldWidth;
-        hidden = false;
-    }
-
     let r = getRandomInt(255);
     let g = getRandomInt(255);
     let b = getRandomInt(255);
+
+    let tension = 0.1;
+    let borderWidth = othersWidth;
+    let hidden = false;
+    let borderColor = `rgb(${r}, ${g}, ${b})`
+
+    if (label === "Tomas Liutvinas"){
+        borderWidth = boldWidth;
+        borderColor = 'rgb(204, 0, 0)';
+    }
 
     raceDataArray.push(
             { 
             label: label,
             data: data,
             fill:false,
-            borderColor: `rgb(${r}, ${g}, ${b})`,
+            borderColor: borderColor,
             tension: tension,
             borderWidth: borderWidth,
             hidden:hidden,
@@ -57,18 +60,12 @@ for (var i = 0; i < sourceDataArray.length; i++){
             label: label,
             data: champStandings,
             fill: false,
-            borderColor: `rgb(${r}, ${g}, ${b})`,
+            borderColor: borderColor,
             tension: tension,
             borderWidth: borderWidth,
             hidden: hidden
         }
     );
-}
-
-console.log(raceDataArray);
-
-function getRandomInt(max) {
-    return Math.floor(Math.random() * max);
 }
 
 $(function() {
@@ -98,29 +95,63 @@ $(function() {
     const raceChartConfig = {
         type: 'line',
         data: raceData,
+        options: {
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Race results',
+                    font: {
+                        size: 32
+                    }
+                },
+                legend:{
+                    display:false
+                },
+                htmlLegend: {
+                    // ID of the container to put the legend in
+                    containerID: 'chartLegend',
+                }
+            }
+        },
+        plugins: [htmlLegendPlugin]
     };
 
     const championshipChartConfig = {
         type: 'line',
         data: championshipData,
+        options: {
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Speedway 2021 championship results',
+                    font: {
+                        size: 32
+                    }
+                },
+                legend: {
+                    display:false
+                },
+                htmlLegend: {
+                    // ID of the container to put the legend in
+                    containerID: 'chartLegend',
+                }
+            }
+        },
+        plugins: [htmlLegendPlugin]
     };
 
     const myChart = new Chart(racesCtx, raceChartConfig);
     const chChart = new Chart(championshipCtx, championshipChartConfig);
 
-    $('button.top').on('click',function(){
+    charts = [myChart, chChart];
+   
+    $('button.top-25').on('click',function(){
         let counter = 0;
 
         myChart.data.datasets.forEach((dataset) => {
+            dataset.borderWidth = othersWidth;
 
-            if (dataset.label === "Tomas Liutvinas") {
-                dataset.borderWidth = boldWidth;
-                dataset.borderColor = `rgb(204, 0, 0)`;
-            } else {
-                dataset.borderWidth = othersWidth;
-            }
-
-            if (++counter < counterLimit){
+            if (++counter <= counterLimit){
                 dataset.hidden = false;
             }else{
                 dataset.hidden = true;
@@ -130,14 +161,9 @@ $(function() {
         counter = 0;
 
         chChart.data.datasets.forEach((dataset) => {
-            if (dataset.label === "Tomas Liutvinas") {
-                dataset.borderWidth = boldWidth;
-                dataset.borderColor = `rgb(204, 0, 0)`;
-            } else {
-                dataset.borderWidth = othersWidth;
-            }
+            dataset.borderWidth = othersWidth;
 
-            if (++counter < counterLimit) {
+            if (++counter <= counterLimit) {
                 dataset.hidden = false;
             } else {
                 dataset.hidden = true;
@@ -148,7 +174,36 @@ $(function() {
         chChart.update();
     });
 
-    $('button.boldKnown').on('click', function () {
+    $('button.top-5').on('click', function () {
+        let counter = 0;
+
+        myChart.data.datasets.forEach((dataset) => {
+            dataset.borderWidth = boldWidth;
+
+            if (++counter <= 5) {
+                dataset.hidden = false;
+            } else {
+                dataset.hidden = true;
+            }
+        });
+
+        counter = 0;
+
+        chChart.data.datasets.forEach((dataset) => {
+            dataset.borderWidth = boldWidth;
+
+            if (++counter <= 5) {
+                dataset.hidden = false;
+            } else {
+                dataset.hidden = true;
+            }
+        });
+
+        myChart.update();
+        chChart.update();
+    });
+
+    $('button.bold-rivals').on('click', function () {
         myChart.data.datasets.forEach((dataset) => {
             if (defaultPeople.includes(dataset.label)) {
                 dataset.borderWidth = boldWidth;
@@ -156,8 +211,6 @@ $(function() {
                 dataset.borderWidth = othersWidth;
             }
         });
-
-        counter = 0;
 
         chChart.data.datasets.forEach((dataset) => {
             if (defaultPeople.includes(dataset.label)) {
@@ -171,26 +224,34 @@ $(function() {
         chChart.update();
     });
 
-    $('button.reset').on('click', function () {
+    $('button.bold-tomsen').on('click', function () {
         myChart.data.datasets.forEach((dataset) => {
-            console.log(dataset.label);
-            if (defaultPeople.includes(dataset.label)) {
+            if (dataset.label === "Tomas Liutvinas") {
                 dataset.borderWidth = boldWidth;
-                dataset.hidden = false;
-            }else{
-                dataset.hidden = true;
+            } else {
+                dataset.borderWidth = othersWidth;
             }
         });
 
-        counter = 0;
+        chChart.data.datasets.forEach((dataset) => {
+            if (dataset.label === "Tomas Liutvinas") {
+                dataset.borderWidth = boldWidth;
+            } else {
+                dataset.borderWidth = othersWidth;
+            }
+        });
+
+        myChart.update();
+        chChart.update();
+    });
+
+    $('button.reset-bold').on('click', function () {
+        myChart.data.datasets.forEach((dataset) => {
+            dataset.borderWidth = othersWidth;
+        });
 
         chChart.data.datasets.forEach((dataset) => {
-            if (defaultPeople.includes(dataset.label)) {
-                dataset.borderWidth = boldWidth;
-                dataset.hidden = false;
-            } else {
-                dataset.hidden = true;
-            }
+            dataset.borderWidth = othersWidth;
         });
 
         myChart.update();
@@ -198,27 +259,31 @@ $(function() {
         
     });
 
-    $('button.enableAll').on('click', function () {
+    $('button.clear').on('click', function () {
+        myChart.data.datasets.forEach((dataset) => {
+            dataset.hidden = true;
+            dataset.borderWidth = standardWidth;
+        });
+
+        chChart.data.datasets.forEach((dataset) => {
+            dataset.hidden = true;
+            dataset.borderWidth = standardWidth;
+        });
+
+        myChart.update();
+        chChart.update();
+
+    });
+
+    $('button.all').on('click', function () {
         myChart.data.datasets.forEach((dataset) => {
             dataset.hidden = false;
-
-            if (dataset.label === "Tomas Liutvinas") {
-                dataset.borderWidth = boldWidth;
-                dataset.borderColor = `rgb(204, 0, 0)`;
-            } else {
-                dataset.borderWidth = othersWidth;
-            }
+            dataset.borderWidth = othersWidth;
         });
 
         chChart.data.datasets.forEach((dataset) => {
             dataset.hidden = false;
-
-            if (dataset.label === "Tomas Liutvinas") {
-                dataset.borderWidth = boldWidth;
-                dataset.borderColor = `rgb(204, 0, 0)`;
-            } else {
-                dataset.borderWidth = othersWidth;
-            }
+            dataset.borderWidth = othersWidth;
         });
 
         myChart.update();

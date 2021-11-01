@@ -12,3 +12,8 @@ body {
   color: #fff;
   border-radius: 5px;
 }
+
+.grid-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
