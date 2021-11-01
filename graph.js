@@ -60,8 +60,7 @@ for (var i = 0; i < sourceDataArray.length; i++){
             borderColor: `rgb(${r}, ${g}, ${b})`,
             tension: tension,
             borderWidth: borderWidth,
-            hidden: hidden,
-            hoverBorderWidth: boldWidth
+            hidden: hidden
         }
     );
 }
