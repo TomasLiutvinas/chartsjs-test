@@ -17,3 +17,14 @@ body {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
 }
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.center button{
+    padding: 5px;
+    margin: 5px;
+}

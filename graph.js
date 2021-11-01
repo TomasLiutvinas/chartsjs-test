@@ -111,7 +111,11 @@ $(function() {
                     // ID of the container to put the legend in
                     containerID: 'chartLegend',
                 }
-            }
+            },
+            scales: {
+                 x: { title: { display: true, text: 'Races',  font: { size: 24 } } }, 
+                 y: { title: { display: true, text: 'Points', font: { size: 24 } } }
+                }
         },
         plugins: [htmlLegendPlugin]
     };
@@ -135,6 +139,10 @@ $(function() {
                     // ID of the container to put the legend in
                     containerID: 'chartLegend',
                 }
+            },
+            scales: { 
+                x: { title: { display: true, text: 'Races', font: { size: 24 } } },
+                y: { title: { display: true, text: 'Points', font: { size: 24 } } }
             }
         },
         plugins: [htmlLegendPlugin]
@@ -178,7 +186,7 @@ $(function() {
         let counter = 0;
 
         myChart.data.datasets.forEach((dataset) => {
-            dataset.borderWidth = boldWidth;
+            dataset.borderWidth = standardWidth;
 
             if (++counter <= 5) {
                 dataset.hidden = false;
@@ -190,7 +198,7 @@ $(function() {
         counter = 0;
 
         chChart.data.datasets.forEach((dataset) => {
-            dataset.borderWidth = boldWidth;
+            dataset.borderWidth = standardWidth;
 
             if (++counter <= 5) {
                 dataset.hidden = false;
