@@ -12,7 +12,8 @@ const defaultPeople = [
     "Tomas Liutvinas",
     "Tomas Jurkevičius",
     "Donatas Bieliauskas",
-    "Andrius Bareiša"
+    "Andrius Bareiša",
+    "Tomas Mikolaitis"
 ];
 
 for (var i = 0; i < sourceDataArray.length; i++){
