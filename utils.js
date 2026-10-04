@@ -1,87 +1,41 @@
-const getOrCreateLegendList = (chart, id) => {
-    const legendContainer = document.getElementById(id);
-    let listContainer = legendContainer.querySelector('ul');
+// Pure helpers shared by the page and data-integrity tests.
+export function prepareDrivers(source) {
+  const drivers = source.map((entry, index) => {
+    let running = 0;
+    return { ...entry, id: index, total: entry.points.reduce((a, b) => a + b, 0),
+      cumulative: entry.points.map(points => (running += points)) };
+  }).sort((a, b) => b.total - a.total || a.id - b.id);
+  let rank = 0;
+  drivers.forEach((driver, index) => {
+    if (index === 0 || driver.total !== drivers[index - 1].total) rank = index + 1;
+    driver.rank = rank;
+  });
+  return drivers;
+}
 
-    if (!listContainer) {
-        listContainer = document.createElement('ul');
-        listContainer.classList = 'grid-list';
-        // listContainer.style.display = 'flex';
-        listContainer.style.flexDirection = 'row';
-        listContainer.style.margin = 0;
-        listContainer.style.padding = 0;
+export function normaliseName(value) {
+  return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+}
 
-        legendContainer.appendChild(listContainer);
-    }
+export function driverColor(name, dark = false) {
+  const fixed = { 'Tomas Liutvinas': '#d83b2e', 'Tomas Jurkevičius': '#27688b',
+    'Donatas Bieliauskas': '#a6761d', 'Andrius Bareiša': '#77518d', 'Tomas Mikolaitis': '#23786c' };
+  const bright = { 'Tomas Liutvinas': '#f06556', 'Tomas Jurkevičius': '#67b4dd',
+    'Donatas Bieliauskas': '#dab05b', 'Andrius Bareiša': '#b797d1', 'Tomas Mikolaitis': '#6ac5b0' };
+  if (fixed[name]) return dark ? bright[name] : fixed[name];
+  let hash = 0;
+  for (const character of name) hash = (hash * 31 + character.codePointAt(0)) >>> 0;
+  return `hsl(${hash % 360}, 54%, ${dark ? 65 : 42}%)`;
+}
 
-    return listContainer;
-};
-
-const htmlLegendPlugin = {
-    id: 'htmlLegend',
-    afterUpdate(chart, args, options) {
-        const ul = getOrCreateLegendList(chart, options.containerID);
-
-        // Remove old legend items
-        while (ul.firstChild) {
-            ul.firstChild.remove();
-        }
-
-        // Reuse the built-in legendItems generator
-        const items = chart.options.plugins.legend.labels.generateLabels(chart);
-
-        items.forEach(item => {
-            const li = document.createElement('li');
-            li.style.alignItems = 'center';
-            li.style.cursor = 'pointer';
-            li.style.display = 'flex';
-            li.style.flexDirection = 'row';
-            li.style.marginLeft = '10px';
-
-            li.onclick = () => {
-                const {
-                    type
-                } = chart.config;
-                if (type === 'pie' || type === 'doughnut') {
-                    // Pie and doughnut charts only have a single dataset and visibility is per item
-                    charts.forEach((chartItem) => {
-                        chartItem.toggleDataVisibility(item.index);
-                        chartItem.update();
-                    })
-                } else {
-                    charts.forEach((chartItem) => {
-                        chartItem.setDatasetVisibility(item.datasetIndex, !chartItem.isDatasetVisible(item.datasetIndex));
-                        chartItem.update();
-                    })
-                }
-            };
-
-            // Color box
-            const boxSpan = document.createElement('span');
-            boxSpan.style.background = item.strokeStyle;
-            boxSpan.style.borderColor = item.strokeStyle;
-            boxSpan.style.borderWidth = item.lineWidth + 'px';
-            boxSpan.style.display = 'inline-block';
-            boxSpan.style.height = '20px';
-            boxSpan.style.marginRight = '10px';
-            boxSpan.style.width = '20px';
-
-            // Text
-            const textContainer = document.createElement('p');
-            textContainer.style.color = item.fontColor;
-            textContainer.style.margin = 0;
-            textContainer.style.padding = 0;
-            textContainer.style.textDecoration = item.hidden ? 'line-through' : '';
-
-            const text = document.createTextNode(item.text);
-            textContainer.appendChild(text);
-
-            li.appendChild(boxSpan);
-            li.appendChild(textContainer);
-            ul.appendChild(li);
-        });
-    }
-};
-
-const getRandomInt = function(max) {
-    return Math.floor(Math.random() * max);
-};
+export function presetSelection(preset, drivers, rivals, tomsen) {
+  switch (preset) {
+    case 'rivals': return new Set(drivers.filter(d => rivals.includes(d.name)).map(d => d.id));
+    case 'tomsen': return new Set(drivers.filter(d => d.name === tomsen).map(d => d.id));
+    case 'top5': return new Set(drivers.slice(0, 5).map(d => d.id));
+    case 'top25': return new Set(drivers.slice(0, 25).map(d => d.id));
+    case 'all': return new Set(drivers.map(d => d.id));
+    case 'clear': return new Set();
+    default: throw new Error(`Unknown preset: ${preset}`);
+  }
+}

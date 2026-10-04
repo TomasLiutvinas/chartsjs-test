@@ -1,38 +1,77 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.6.0/dist/chart.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script type="text/javascript" src="utils.js"></script>
-    <script type="text/javascript" src="graph.js"></script>
-    <link rel="stylesheet" href="app.css">
-    
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title></title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#171918">
+  <meta name="description" content="Seven rounds of Speedway Cup 2021. Explore Tomas Liutvinas’s season, compare drivers, and browse the original race results.">
+  <title>Speedway Cup 2021 · tomsen</title>
+  <script src="theme.js"></script>
+  <link rel="stylesheet" href="app.css">
+  <script defer src="vendor/chart.umd.min.js"></script>
+  <script type="module" src="graph.js"></script>
 </head>
 <body>
-    
-    <div class="center">
-        <button class="all"">All</button>
-        <button class=" top-5">Top 5</button>
-        <button class="top-25">Top 25</button>
-        <button class="bold-rivals">Bold Rivals</button>
-        <button class="bold-tomsen"">Bold Tomsen</button>
-        <button class=" reset-bold"">Reset Bold</button>
-        <button class="clear"">Clear</button>
+  <a class="skip-link" href="#results">Skip to results</a>
+  <header class="site-header shell">
+    <a class="wordmark" href="https://theamazingtom.com/">tomsen<span> / racing archive</span></a>
+    <div class="header-actions">
+    <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Switch colour theme" title="Switch colour theme">
+      <svg class="sun-icon" aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg>
+      <svg class="moon-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M20.4 14A8.5 8.5 0 0 1 10 3.6 8.5 8.5 0 1 0 20.4 14Z"/></svg>
+    </button>
+    <a class="back-link" href="https://theamazingtom.com/">Back to the stuff I do <span aria-hidden="true">↗</span></a>
     </div>
-
-    <div class="wrapper">
-        <div class="box">
-            <canvas id="championship"></canvas>
+  </header>
+  <main>
+    <section class="hero shell" aria-labelledby="page-title">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="signal" aria-hidden="true"></span> Go-kart racing · 2021 season</p>
+        <h1 id="page-title">Speedway<br>Cup <span>2021.</span></h1>
+        <p class="intro">Seven rounds. A few familiar rivals.<br>A proper racing season, in numbers.</p>
+      </div>
+      <div class="season-card">
+        <div class="season-card-top"><span class="eyebrow">Driver record</span><span class="number-tag">TL / 2021</span></div>
+        <h2>Tomas Liutvinas</h2>
+        <p class="driver-alias">also known as tomsen</p>
+        <div class="finish"><strong id="final-position">18<span>/22</span></strong><div><span class="eyebrow">Final standings</span><p>Not last. So that’s nice.</p></div></div>
+        <div class="season-stats"><div><strong id="my-points">114</strong><span>raw points</span></div><div><strong id="raw-position">25<span>/109</span></strong><span>raw points rank</span></div><div><strong>07</strong><span>rounds</span></div></div>
+        <div class="round-record" id="round-record" aria-label="Tomas’s points per round"></div>
+      </div>
+    </section>
+    <div class="archive-band"><div class="shell"><span>2021 season archive</span><span>7 rounds <i aria-hidden="true">/</i> 109 entrants <i aria-hidden="true">/</i> original race data</span></div></div>
+    <section class="analysis shell" aria-labelledby="chart-title">
+      <div class="section-heading"><div><p class="eyebrow">01 / The season</p><h2 id="chart-title">Round by round.</h2></div><p>Pick your drivers.<br>See where the points came from.</p></div>
+      <div class="chart-panel">
+        <div class="chart-toolbar">
+          <div class="mode-switch" role="group" aria-label="Chart view"><button type="button" data-mode="cumulative" aria-pressed="true">Season total</button><button type="button" data-mode="round" aria-pressed="false">Each round</button></div>
+          <p id="chart-description">Cumulative raw points after each round</p>
         </div>
-        
-        <div class="box">
-            <canvas id="races"></canvas>
+        <div class="presets" role="group" aria-label="Choose drivers to compare">
+          <button type="button" data-preset="rivals" aria-pressed="true">My rivals</button>
+          <button type="button" data-preset="tomsen" aria-pressed="false">Just tomsen</button>
+          <button type="button" data-preset="top5" aria-pressed="false">Top 5</button>
+          <button type="button" data-preset="top25" aria-pressed="false">Top 25</button>
+          <button type="button" data-preset="all" aria-pressed="false">All 109</button>
+          <button type="button" data-preset="clear" aria-pressed="false">Clear</button>
         </div>
-    </div>
-    
-    <div id="chartLegend" style="padding-top: 40px;"/>
+        <div class="chart-wrap"><canvas id="season-chart" role="img" aria-label="Cumulative raw points for the selected drivers across seven rounds. Exact values are available in the results table below."></canvas><p id="chart-empty" hidden>Choose a preset or add drivers from the results table below.</p><p id="chart-error" hidden>The chart could not load. All race results are available in the table below.</p></div>
+        <div class="chart-footer"><span id="selection-count" role="status" aria-live="polite"></span><span>Top presets use raw point totals</span></div>
+        <div id="chart-legend" class="chart-legend" aria-label="Selected drivers; click to remove"></div>
+      </div>
+    </section>
+    <section class="results shell" id="results" aria-labelledby="results-title">
+      <div class="section-heading"><div><p class="eyebrow">02 / The field</p><h2 id="results-title">Every point counts.</h2></div><a class="text-link" href="#my-result" id="jump-to-me">Find my result <span aria-hidden="true">↓</span></a></div>
+      <div class="results-toolbar"><label class="search-box"><span>Find a driver</span><input id="driver-search" type="search" placeholder="Name or surname…" autocomplete="off"></label><span id="result-count" role="status" aria-live="polite"></span></div>
+      <p class="table-help" id="table-help">Select drivers to compare in the chart. Ranked by the sum of all seven rounds.</p>
+      <div class="table-scroll" tabindex="0" role="region" aria-label="Race results; scroll horizontally to see all rounds" aria-describedby="table-help">
+        <table><caption class="sr-only">Raw Speedway Cup 2021 results for all 109 entrants, ordered by total points. These are separate from the final championship standings.</caption><thead><tr><th scope="col"><span class="sr-only">Compare</span></th><th scope="col">Rank</th><th scope="col" class="driver-col">Driver</th><th scope="col" aria-label="Round 1">I</th><th scope="col" aria-label="Round 2">II</th><th scope="col" aria-label="Round 3">III</th><th scope="col" aria-label="Round 4">IV</th><th scope="col" aria-label="Round 5">V</th><th scope="col" aria-label="Round 6">VI</th><th scope="col" aria-label="Round 7">VII</th><th scope="col">Total</th></tr></thead><tbody id="results-body"></tbody></table>
+      </div>
+      <p id="no-results" hidden>No drivers match that search. Try a different name.</p>
+      <div class="data-note"><span class="note-marker" aria-hidden="true">↳</span><p><strong>A note on the numbers.</strong> This is the original raw race data. Zeros are kept exactly as recorded. The raw points ranking adds up all seven rounds; it is separate from the final championship standings, where I finished 18th of 22. Names and scores haven’t been edited.</p></div>
+      <noscript><p>Enable JavaScript to browse the interactive results, or <a href="https://github.com/TomasLiutvinas/chartsjs-test/blob/master/data.js">read the original result data</a>.</p></noscript>
+    </section>
+  </main>
+  <footer class="site-footer shell"><a class="wordmark" href="https://theamazingtom.com/">tomsen<span> / a little faster than last time</span></a><a href="https://github.com/TomasLiutvinas/chartsjs-test">Source &amp; race data ↗</a></footer>
 </body>
 </html>
