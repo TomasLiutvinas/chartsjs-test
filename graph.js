@@ -1,5 +1,5 @@
-import { sourceResults, tomsen, rivals, finalPlacement } from './data.js';
-import { prepareDrivers, normaliseName, driverColor, presetSelection } from './utils.js';
+import { sourceResults, tomsen, rivals, finalPlacement } from './data.js?v=20261004-1';
+import { prepareDrivers, normaliseName, driverColor, presetSelection } from './utils.js?v=20261004-1';
 
 const drivers = prepareDrivers(sourceResults);
 const mine = drivers.find(driver => driver.name === tomsen);
