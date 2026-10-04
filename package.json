@@ -1,0 +1,10 @@
+{
+  "name": "speedway-cup-2021",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node results.test.js",
+    "check": "node --check graph.js && node --check utils.js && node --check data.js && node --check theme.js"
+  },
+  "engines": { "node": ">=24" }
+}
