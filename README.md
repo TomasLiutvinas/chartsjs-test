@@ -29,3 +29,8 @@ and [responsive-chart](https://www.chartjs.org/docs/latest/configuration/respons
 The header theme toggle switches between light and dark mode, including chart
 colours and table surfaces. It follows the system theme until a choice is saved
 in local storage, and applies before styling loads to avoid a light flash.
+
+Runtime CSS/JavaScript URLs and browser module imports include a release query
+(`v=20261004-1`). Bump it together in `index.html` and `graph.js` when releasing
+changed assets so GitHub Pages/browser caches cannot mix old scripts/styles
+with a new page. Node tests import the unversioned source files locally.
